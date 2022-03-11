@@ -13,7 +13,24 @@ containers:
         container: /code/node_modules
     working_directory: /code
 
+  db:
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - local: ./postgres-data
+        container: /var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: app
+      POSTGRES_DB: db
+
 tasks:
+  start-dev-db:
+    description: start dev database
+    run:
+      container: db
+
   hello-world:
     description: Say hello to everyone
     run:
@@ -34,13 +51,18 @@ tasks:
       container: build-server_env
       command: npm run build
   # task for running app
-  run:
+  start-server:
     description: Run the application
     prerequisites:
       - build
     run:
+      environment:
+        PORT: 8080
+        POSTGRES_URI: postgres://app:password@db/db
       container: build-server_env
       command: npm run start
       ports:
         - local: 8080
           container: 8080
+    dependencies:
+      - db

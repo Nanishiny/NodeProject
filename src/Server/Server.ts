@@ -1,11 +1,13 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { Authorizer } from '../Authorization/Authorizer';
+import { applyMigration } from '../database/migration';
 import { LoginHandler } from './LoginHandler';
 import { Utils } from './Utils';
 
 export class Server {
   private authorizer: Authorizer = new Authorizer();
   createServer() {
+    applyMigration();
     createServer(async (req: IncomingMessage, res: ServerResponse) => {
       console.log('got request from: ' + req.url);
       const basePath = Utils.getUrlBasePath(req.url);
