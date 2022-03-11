@@ -7,7 +7,6 @@ import { Utils } from './Utils';
 export class Server {
   private authorizer: Authorizer = new Authorizer();
   createServer() {
-    applyMigration();
     createServer(async (req: IncomingMessage, res: ServerResponse) => {
       console.log('got request from: ' + req.url);
       const basePath = Utils.getUrlBasePath(req.url);

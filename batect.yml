@@ -55,6 +55,7 @@ tasks:
     description: Run the application
     prerequisites:
       - build
+      - db
     run:
       environment:
         PORT: 8080
@@ -62,7 +63,6 @@ tasks:
       container: build-server_env
       command: npm run start
       ports:
-        - local: 8080
-          container: 8080
+        - 5000:8080
     dependencies:
       - db

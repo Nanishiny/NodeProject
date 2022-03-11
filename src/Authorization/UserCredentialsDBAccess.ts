@@ -1,26 +1,28 @@
 import { UserCredentials } from '../Shared/Models';
-import * as nedb from 'nedb';
-import Nedb = require('nedb');
+
+import { pool } from '../database/Client';
 
 export class UserCredentialsDBAccess {
-  private nedb: Nedb = new Nedb();
-
-  constructor() {
-    this.nedb = new Nedb('database/UserCredentials.db');
-    this.nedb.loadDatabase();
-  }
+  constructor() {}
 
   public async putUserCredentials(
     userCredentials: UserCredentials
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.nedb.insert(userCredentials, (err: Error | null, docs: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(docs);
+      pool.query(
+        `INSERT INTO UserCredentials(id, AccessRight ) VALUES(${
+          (userCredentials.username,
+          userCredentials.password,
+          userCredentials.accessRights)
+        })`,
+        (err: Error | null, docs: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(docs);
+          }
         }
-      });
+      );
     });
   }
 
@@ -29,9 +31,11 @@ export class UserCredentialsDBAccess {
     password: string
   ): Promise<UserCredentials | undefined> {
     return new Promise((resolve, reject) => {
-      this.nedb.find(
-        { username: username, password: password },
-        (err: Error | null, docs: UserCredentials[]) => {
+      pool.query(
+        `SELECT * FROM UserCredentials WHERE 
+        username = ${username} 
+        AND password = ${password}`,
+        (err: Error | null, docs: any) => {
           if (err) {
             reject(err);
           } else {

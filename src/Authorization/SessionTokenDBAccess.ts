@@ -1,10 +1,7 @@
-import Nedb = require('nedb');
 import { SessionToken } from '../Server/Model';
 import { pool } from '../database/Client';
 
 export class SessionTokenDBAccess {
-  private nedb: Nedb = new Nedb();
-
   constructor() {}
 
   public async storeSessionToken(token: SessionToken): Promise<void> {
@@ -16,7 +13,14 @@ export class SessionTokenDBAccess {
           token.valid,
           token.expirationTime,
           token.accessRight)
-        })`
+        })`,
+        (err: Error | null, docs: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
       );
     });
   }
