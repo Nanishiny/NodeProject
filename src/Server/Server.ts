@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { Authorizer } from '../Authorization/Authorizer';
-import { applyMigration } from '../database/migration';
+
 import { LoginHandler } from './LoginHandler';
 import { Utils } from './Utils';
 
